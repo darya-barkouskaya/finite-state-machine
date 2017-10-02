@@ -9,7 +9,7 @@ constructor(config) {
         }
 
         this.config = config;
-        this.currentState = config.initial;
+        this.currentState =config.initial;
         this.states = [config.initial];
         this.position = 0;
     }
@@ -27,7 +27,7 @@ constructor(config) {
      * @param state
      */
     changeState(state) {
-        var varExist = Object.keys(this.config.states).some(function(key) {
+        var varExist= Object.keys(this.config.states).some(function(key) {
             return key === state;
         });
 
@@ -51,7 +51,7 @@ constructor(config) {
         });
 
         if (varExist) {
-            this.states = this.states.slice(0, this.position + 1);
+            this.states= this.states.slice(0, this.position + 1);
             this.states.push(events[event]);
             this.position = this.states.length - 1;
             this.currentState = this.states[this.position];
@@ -103,7 +103,7 @@ constructor(config) {
         var isAvail = false;
 
         if (this.position != 0) {
-            this.currentState = this.states[this.position - 1];
+            this.currentState =this.states[this.position - 1];
             this.position--;
             isAvail = true;
         }
@@ -119,8 +119,8 @@ constructor(config) {
     redo() {
         var isAvail = false;
 
-        if (this.position + 1 < this.states.length) {
-            this.currentState = this.states[this.position + 1];
+        if (this.position + 1 <this.states.length) {
+            this.currentState=this.states[this.position + 1];
             this.position++;
             isAvail = true;
         }
@@ -132,7 +132,7 @@ constructor(config) {
      * Clears transition history
      */
     clearHistory() {
-        this.states = [];
+        this.states= [];
         this.states.push(this.currentState);
         this.position = 0;
     }
