@@ -3,30 +3,71 @@ class FSM {
      * Creates new FSM instance.
      * @param config
      */
-    constructor(config) {}
+    constructor(config) {
+        if(config === null) {
+            throw Error();
+        }
+        this.config = config;
+        this.position = 0;
+        this.currentState = config.initial;
+        this.states = [config.initial];
+    }
 
     /**
      * Returns active state.
      * @returns {String}
      */
-    getState() {}
+    getState() {
+        return this.currentState;
+    }
 
     /**
      * Goes to specified state.
      * @param state
      */
-    changeState(state) {}
+    changeState(state) {
+        var varExist = Object.keys(this.config.states).some(function(key) {
+            return key === state;
+        });
+        if (varExist) {
+            this.states.push(state);
+            this.position = this.states.length - 1;
+            this.currentState = state;
+        } 
+        else {
+            throw Error();
+        }
+    }
 
     /**
      * Changes state according to event transition rules.
      * @param event
      */
-    trigger(event) {}
+    trigger(event) {
+       var varExist= Object.keys(events).some(function(key) {
+            return key === event;
+        });
+        var events = this.config.states[this.currentState].transitions;
+        if(varExist) {
+            this.states = this.states.slice(0, this.position + 1);
+            this.states.push(events[event]);
+            this.position = this.states.length - 1;
+            this.currentState = this.states[this.position];
+        }
+        else {
+            throw Error();
+        }
+    }
 
     /**
      * Resets FSM state to initial.
      */
-    reset() {}
+    reset() {
+        this.states = [];
+        this.states.push(this.config.initial)
+        this.position = 0;
+        this.currentState = this.config.initial;
+    }
 
     /**
      * Returns an array of states for which there are specified event transition rules.
@@ -34,26 +75,66 @@ class FSM {
      * @param event
      * @returns {Array}
      */
-    getStates(event) {}
+    getStates(event) {
+        var states = [];
+
+        if (!event) {
+            states = Object.keys(this.config.states);
+        } 
+        else {
+            Object.keys(this.config.states).forEach(state => {
+                Object.keys(this.config.states[state].transitions).forEach(eventOfState => {
+                    if (event === eventOfState) {
+                        states.push(state);
+                    }
+                })
+            });
+        }
+        return states;
+    }
 
     /**
      * Goes back to previous state.
      * Returns false if undo is not available.
      * @returns {Boolean}
      */
-    undo() {}
+    undo() {
+        var varExist = false;
+
+        if (this.position != 0) {
+            this.currentState = this.states[this.position - 1];
+            this.position--;
+            varExist = true;
+        }
+
+        return varExist;
+    }
 
     /**
      * Goes redo to state.
      * Returns false if redo is not available.
      * @returns {Boolean}
      */
-    redo() {}
+    redo() {
+        var varExist = false;
+
+        if (this.position + 1 < this.states.length) {
+            this.currentState = this.states[this.position + 1];
+            this.position++;
+            varExist = true;
+        }
+
+        return varExist;
+    }
 
     /**
      * Clears transition history
      */
-    clearHistory() {}
+    clearHistory() {
+        this.states = [];
+        this.states.push(this.currentState);
+        this.position = 0;
+    }
 }
 
 module.exports = FSM;
