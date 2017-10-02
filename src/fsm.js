@@ -3,14 +3,15 @@ class FSM {
      * Creates new FSM instance.
      * @param config
      */
-    constructor(config) {
-        if(config === null) {
+constructor(config) {
+        if (config === null) {
             throw Error();
         }
+
         this.config = config;
-        this.position = 0;
         this.currentState = config.initial;
         this.states = [config.initial];
+        this.position = 0;
     }
 
     /**
@@ -29,12 +30,12 @@ class FSM {
         var varExist = Object.keys(this.config.states).some(function(key) {
             return key === state;
         });
+
         if (varExist) {
             this.states.push(state);
             this.position = this.states.length - 1;
             this.currentState = state;
-        } 
-        else {
+        } else {
             throw Error();
         }
     }
@@ -44,17 +45,17 @@ class FSM {
      * @param event
      */
     trigger(event) {
-       var varExist= Object.keys(events).some(function(key) {
+        var events = this.config.states[this.currentState].transitions;
+        var varExist = Object.keys(events).some(function(key) {
             return key === event;
         });
-        var events = this.config.states[this.currentState].transitions;
-        if(varExist) {
+
+        if (varExist) {
             this.states = this.states.slice(0, this.position + 1);
             this.states.push(events[event]);
             this.position = this.states.length - 1;
             this.currentState = this.states[this.position];
-        }
-        else {
+        } else {
             throw Error();
         }
     }
@@ -64,7 +65,7 @@ class FSM {
      */
     reset() {
         this.states = [];
-        this.states.push(this.config.initial)
+        this.states.push(this.config.initial);
         this.position = 0;
         this.currentState = this.config.initial;
     }
@@ -80,8 +81,7 @@ class FSM {
 
         if (!event) {
             states = Object.keys(this.config.states);
-        } 
-        else {
+        } else {
             Object.keys(this.config.states).forEach(state => {
                 Object.keys(this.config.states[state].transitions).forEach(eventOfState => {
                     if (event === eventOfState) {
@@ -90,6 +90,7 @@ class FSM {
                 })
             });
         }
+
         return states;
     }
 
@@ -99,15 +100,15 @@ class FSM {
      * @returns {Boolean}
      */
     undo() {
-        var varExist = false;
+        var isAvail = false;
 
         if (this.position != 0) {
             this.currentState = this.states[this.position - 1];
             this.position--;
-            varExist = true;
+            isAvail = true;
         }
 
-        return varExist;
+        return isAvail;
     }
 
     /**
@@ -116,15 +117,15 @@ class FSM {
      * @returns {Boolean}
      */
     redo() {
-        var varExist = false;
+        var isAvail = false;
 
         if (this.position + 1 < this.states.length) {
             this.currentState = this.states[this.position + 1];
             this.position++;
-            varExist = true;
+            isAvail = true;
         }
 
-        return varExist;
+        return isAvail;
     }
 
     /**
@@ -138,5 +139,3 @@ class FSM {
 }
 
 module.exports = FSM;
-
-/** @Created by Uladzimir Halushka **/
